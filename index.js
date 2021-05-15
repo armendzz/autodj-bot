@@ -1,9 +1,10 @@
 const ShoutcastTranscoder = require("shoutcast-transcoder");
 const fs = require('fs');
 const ytdl = require('ytdl-core');
+const { exec } = require("child_process");
 
 const scTrans = new ShoutcastTranscoder({
-  host: "202.61.229.127",
+  host: "149.202.20.88",
   port: 7799,
   username: "admin",
   password: "ZemraOrg..",
@@ -11,7 +12,7 @@ const scTrans = new ShoutcastTranscoder({
 
 scTrans
   .playlistData({
-    name: "main",
+    name: "newmain",
   })
   .then(function (response) {
     return response;
@@ -20,7 +21,7 @@ scTrans
 //check if track exist in playlist
 async function getCurrentPlaylist(param) {
   let playlista = await scTrans
-    .playlistData({ name: "main" })
+    .playlistData({ name: "newmain" })
     .then(function (response) {
       return response.response.data.playlist.entry;
     });
@@ -28,15 +29,21 @@ async function getCurrentPlaylist(param) {
   //get track name
   let info = await ytdl.getInfo(param);
 
-  return playlista.includes('/home/webapp/autodj/music/' + info.videoDetails.title + '.mp3')
+  if(playlista.includes('/home/armendz/radio/autodj/downloadedmuzik/' + info.videoDetails.title + '.mp3')){
+    return "mire";
+  } else {
+    return info.videoDetails.title;
+  }
+  
 }
 
 
 
-async function createPlaylist() {
+async function createPlaylist(param) {
+  exec('find /home/armendz/radio/autodj/downloadedmuzik -type f -name "*.mp3" > /home/armendz/radio/autodj/playlists/newmain.lst')
   //get current playlist
   let playlista = await scTrans
-    .playlistData({ name: "main" })
+    .playlistData({ name: "newmain" })
     .then(function (response) {
       return response.response.data.playlist.entry;
     });
@@ -47,7 +54,7 @@ async function createPlaylist() {
   });
 
 
-  let newSong = "/home/webapp/autodj/music/ferdez.mp3";
+  let newSong = "/home/armendz/radio/autodj/downloadedmuzik/" + param + ".mp3";
 
 
   let newPlaylist = [];
@@ -66,7 +73,27 @@ async function createPlaylist() {
   }
 
   console.log(newPlaylist)
+
+  const writeStream = fs.createWriteStream('/home/armendz/radio/autodj/playlists/newmain.lst');
+  const pathName = writeStream.path;
+
+  newPlaylist.forEach(value => writeStream.write(`${value}\n`));
+
+  // the finish event is emitted when all data has been flushed from the stream
+  writeStream.on('finish', () => {
+    //reload playlist
+    exec("sh refresh.sh")
+  });
+
+  // handle the errors on the write process
+  writeStream.on('error', (err) => {
+    console.error(`There is an error writing the file ${pathName} => ${err}`)
+  });
+
+  // close the stream
+  writeStream.end();
 }
+
 
 const IRC = require('irc-framework');
 
@@ -83,26 +110,43 @@ let boti = function (nick, ident) {
   });
 
   bot.on('registered', function () {
-    bot.join('#test');
+    bot.join('#armendz');
   });
 
   bot.on('message', function (event) {
     if (event.nick === "ArmendZ" && event.message.startsWith("!deshira")) {
       let words = event.message.split(' ');
       let ytUrl = words[1];
-
+      // TODO - check if words[1] exist
       getCurrentPlaylist(ytUrl).then(function (response) {
-
-        if (response) { event.reply(event.nick + ' Kenga qe e keni keruar egziston ne playlisten tonë.') }
+        if (response == "mire") { event.reply(event.nick + ' Kenga qe e keni keruar egziston ne playlisten tonë.') }
         else {
           event.reply(event.nick + ' Kenga qe keni kerkuar do te shtohet ne playlisten tone dhe ju do ta ndegjoni pas pak.')
+          exec(`youtube-dl --extract-audio --audio-format mp3 --output "/home/armendz/radio/autodj/downloadedmuzik/%(title)s.%(ext)s" ${ytUrl}`, (error, stdout, stderr) => {
+            if (error) {
+              console.log(`error: ${error.message}`);
+              return;
+            }
+            if (stderr) {
+              console.log(`stderr: ${stderr}`);
+              return;
+            }
+            if (!error && !stderr) {
+              // create new playlist and pass new track name
+              createPlaylist(response)
+            }
+          })
         }
-
       })
+    }
 
+    if (event.message == "!deshira") {
+      event.reply(event.nick + ' Per te shtuar kenge ne playlisten tone ju duhet te keni nick te regjistruar dhe ta shenoni ne formatin: !deshira youtube-link')
     }
   });
+
 }
 
 
 boti('auto-dj', 'Lounge');
+
