@@ -9,7 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "fs": "0.0.1-security",
     "irc-framework": "^4.10.0",
-    "shoutcast-transcoder": "^1.0.0"
+    "shoutcast-transcoder": "^1.0.0",
+    "ytdl": "^1.4.1",
+    "ytdl-core": "^4.8.0"
   }
 }

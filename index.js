@@ -1,4 +1,7 @@
 const ShoutcastTranscoder = require("shoutcast-transcoder");
+const fs = require('fs');
+const ytdl = require('ytdl-core');
+
 const scTrans = new ShoutcastTranscoder({
   host: "202.61.229.127",
   port: 7799,
@@ -14,6 +17,22 @@ scTrans
     return response;
   });
 
+//check if track exist in playlist
+async function getCurrentPlaylist(param) {
+  let playlista = await scTrans
+    .playlistData({ name: "main" })
+    .then(function (response) {
+      return response.response.data.playlist.entry;
+    });
+
+  //get track name
+  let info = await ytdl.getInfo(param);
+
+  return playlista.includes('/home/webapp/autodj/music/' + info.videoDetails.title + '.mp3')
+}
+
+
+
 async function createPlaylist() {
   //get current playlist
   let playlista = await scTrans
@@ -27,7 +46,7 @@ async function createPlaylist() {
     return response.response.data.status.activesource.currenttrack;
   });
 
-  
+
   let newSong = "/home/webapp/autodj/music/ferdez.mp3";
 
 
@@ -51,38 +70,39 @@ async function createPlaylist() {
 
 const IRC = require('irc-framework');
 
-let mins = function(){ return Math.floor(Math.random() * 80000000) + 100000; }
 
-let boti = function(nick, ident){
+let boti = function (nick, ident) {
 
-        var bot = new IRC.Client();
+  var bot = new IRC.Client();
+  bot.connect({
+    host: 'web.zemra.org',
+    port: 7050,
+    nick: nick,
+    gecos: 'Vizitore',
+    username: ident,
+  });
 
-
-        bot.connect({
-        host: 'web.zemra.org',
-        port: 7050,
-        nick: nick,
-        gecos: 'Vizitore',
-        username: ident,
-
-});
-
-bot.on('registered', function() {
+  bot.on('registered', function () {
     bot.join('#test');
-});
+  });
 
-bot.on('message', function(event) {
+  bot.on('message', function (event) {
+    if (event.nick === "ArmendZ" && event.message.startsWith("!deshira")) {
+      let words = event.message.split(' ');
+      let ytUrl = words[1];
 
- if (event.nick === "ArmendZ" && event.message.startsWith("!deshira")) {
-   
+      getCurrentPlaylist(ytUrl).then(function (response) {
 
-    
-    event.reply(event.nick + ' Kjo Kenge egziston ne playlisten tone, ju do ta degjoni pas pak.!');
-    
+        if (response) { event.reply(event.nick + ' Kenga qe e keni keruar egziston ne playlisten tonë.') }
+        else {
+          event.reply(event.nick + ' Kenga qe keni kerkuar do te shtohet ne playlisten tone dhe ju do ta ndegjoni pas pak.')
+        }
+
+      })
+
     }
-});
-
+  });
 }
 
 
-boti('auto-dj', 'Lounge')
+boti('auto-dj', 'Lounge');
