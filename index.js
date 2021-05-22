@@ -183,6 +183,10 @@ let boti = function (nick, ident) {
     nick: nick,
     gecos: 'Vizitore',
     username: ident,
+    account: {
+      account: 'AutoDj',
+      password: 'troni321',
+    },
   });
 
   bot.on('registered', function () {
