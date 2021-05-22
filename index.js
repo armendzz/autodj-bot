@@ -3,11 +3,11 @@ const fs = require('fs');
 const ytdl = require('ytdl-core');
 const { exec } = require("child_process");
 const IRC = require('irc-framework');
-const playlistpath = '/home/armendz/radio/autodj/playlists/newmain.lst'
-const trackspath = '/home/armendz/radio/autodj/downloadedmuzik/'
+const playlistpath = '/home/webapp/autodj/playlists/main.lst'
+const trackspath = '/home/webapp/autodj/music/'
 
 const scTrans = new ShoutcastTranscoder({
-  host: "149.202.20.88",
+  host: "202.61.229.127",
   port: 7799,
   username: "admin",
   password: "ZemraOrg..",
@@ -15,7 +15,7 @@ const scTrans = new ShoutcastTranscoder({
 
 scTrans
   .playlistData({
-    name: "newmain",
+    name: "main",
   })
   .then(function (response) {
     return response;
@@ -269,7 +269,7 @@ let boti = function (nick, ident) {
 }
 
 
-boti('auto-dj', 'Lounge');
+boti('AutoDj', 'Radio');
 
 // TODO 
 // add event.reply for help
@@ -280,3 +280,4 @@ boti('auto-dj', 'Lounge');
 // !kenga get currect tarck
 // add function to add users to authorized list
 // add fucntion to remove users from authorized list 
+// add function to remove songs from the list

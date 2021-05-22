@@ -10,15 +10,15 @@
 # 
 
 # Vars
-TRANS_HOME="/home/armendz/radio/autodj"
+TRANS_HOME="/home/webapp/radio"
 TRANS_PID=$(pidof sc_trans)
 TRANS_FIND=$(which find)
 TRANS_KILL=$(which kill)
 TRANS_CHOWN=$(which chown)
 TRANS_PATH="/home/armendz/radio/autodj/downloadedmuzik"
 TRANS_LIST="/home/armendz/radio/autodj/playlists/newmain.lst"
-TRANS_USER="armendz"
-TRANS_GROUP="armendz"
+TRANS_USER="webapp"
+TRANS_GROUP="webapp"
 
 # DONT CHANGE BELOW
 # Create playlist
