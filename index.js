@@ -5,6 +5,9 @@ const { exec } = require("child_process");
 const IRC = require('irc-framework');
 const playlistpath = '/home/webapp/autodj/playlists/main.lst'
 const trackspath = '/home/webapp/autodj/music/'
+const internetradio = require('node-internet-radio');
+const Tail = require('tail').Tail;
+
 
 const scTrans = new ShoutcastTranscoder({
   host: "202.61.229.127",
@@ -188,12 +191,21 @@ let boti = function (nick, ident) {
       password: 'troni321',
     },
   });
-
+  tail = new Tail("/home/webapp/autodj/logs/sc_trans.log");
   bot.on('registered', function () {
-    bot.join('#armendz');
+       
+      tail.on("line", function(data) {
+        if(data.startsWith('<TIT2>')){
+          let data1 = data.replace("<TIT2>", "");
+          let kengaereadhes = data1.replace("</TIT2>", "")
+          bot.say('#albachat', "Kenga e radhes ne Radio Zemra eshte: 4" + kengaereadhes)
+        }
+      }); 
   });
 
   bot.on('message', function (event) {
+
+    // add track to playlist
     if (event.message.startsWith("!deshira")) {
       authUsers(event.nick).then(function(res){
       
@@ -238,15 +250,19 @@ let boti = function (nick, ident) {
     })
     }
 
+    //help
     if (event.message == "!deshira") {
       event.reply(event.nick + ' Per te shtuar kenge ne playlisten tone ju duhet te keni nick te regjistruar dhe ta shenoni ne formatin: !deshira youtube-link, me shume ndihme merni duke shkruar: !autodj')
     }
 
+    // help
     if (event.message == "!autodj") {
       event.reply(event.nick + ' Ndihme reth Autodj: Ju mund te shtoni kenge ne playlisten tone duke perdorur komanden: !deshira linku-youtube. Per te shtuar kenge ju duhet ti plotsoni disa kushte')
       event.reply('1. Nick i regjistruar 2. Kenga te mos jet me e vjeter se viti 2020 3. Kenga duhet nga zhanri: Music ose Entertaiment (Komendi ose humor nuk lejohen) 4. Kenga nuk duhet te jete me e gjate se 399 seconda')
     }
 
+
+    // add users to authorized list
     if (event.message.startsWith("!authorize")) {
 
       isAdmin(event.nick).then(function(isadm){
@@ -266,6 +282,32 @@ let boti = function (nick, ident) {
         }
       })
 
+    }
+
+
+    // next track
+    if (event.message.startsWith("!nextsong")) {
+
+      isAdmin(event.nick).then(function(isadm){
+        if(isadm == "true"){
+          scTrans.nextTrack()
+        }
+      })
+
+    }
+
+    // current track
+    if (event.message.startsWith("!kenga")) {
+      internetradio.getStationInfo("http://degjo.zemra.org:8000", function(error, station) {
+        event.reply(event.nick + " Jeni duke degjuar: 4" + station.title)  
+      });
+    }
+
+
+    if (event.message.startsWith("!asd")) {
+      internetradio.getStationInfo("http://degjo.zemra.org:8000", function(error, station) {
+        event.reply(event.nick + " Jeni duke degjuar: 4" + station.title)  
+      });
     }
 
   });
