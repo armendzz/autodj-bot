@@ -193,7 +193,7 @@ let boti = function (nick, ident) {
   });
   tail = new Tail("/home/webapp/autodj/logs/sc_trans.log");
   bot.on('registered', function () {
-       
+      bot.join('#armendz');
       tail.on("line", function(data) {
         if(data.startsWith('<TIT2>')){
           let data1 = data.replace("<TIT2>", "");
@@ -296,6 +296,17 @@ let boti = function (nick, ident) {
 
     }
 
+    if (event.message.startsWith("!say")) {
+     
+      isAdmin(event.nick).then(function(isadm){
+        if(isadm == "true"){
+          let mesazhi = event.message.replace("!say", "")
+          bot.say('#albachat', mesazhi)
+        }
+      })
+
+    }
+
     // current track
     if (event.message.startsWith("!kenga")) {
       internetradio.getStationInfo("http://degjo.zemra.org:8000", function(error, station) {
@@ -304,11 +315,7 @@ let boti = function (nick, ident) {
     }
 
 
-    if (event.message.startsWith("!asd")) {
-      internetradio.getStationInfo("http://degjo.zemra.org:8000", function(error, station) {
-        event.reply(event.nick + " Jeni duke degjuar: 4" + station.title)  
-      });
-    }
+
 
   });
 
