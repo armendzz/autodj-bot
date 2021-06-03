@@ -198,7 +198,7 @@ let boti = function (nick, ident) {
         if(data.startsWith('<TIT2>')){
           let data1 = data.replace("<TIT2>", "");
           let kengaereadhes = data1.replace("</TIT2>", "")
-          bot.say('#albachat', "Kenga e radhes ne Radio Zemra eshte: 4" + kengaereadhes)
+          bot.say('#albachat', "Kenga e radhes ne Radio Zemra eshte:4 " + kengaereadhes)
         }
       }); 
   });
@@ -258,7 +258,7 @@ let boti = function (nick, ident) {
     // help
     if (event.message == "!autodj") {
       event.reply(event.nick + ' Ndihme reth Autodj: Ju mund te shtoni kenge ne playlisten tone duke perdorur komanden: !deshira linku-youtube. Per te shtuar kenge ju duhet ti plotsoni disa kushte')
-      event.reply('1. Nick i regjistruar 2. Kenga te mos jet me e vjeter se viti 2020 3. Kenga duhet nga zhanri: Music ose Entertaiment (Komendi ose humor nuk lejohen) 4. Kenga nuk duhet te jete me e gjate se 399 seconda')
+      event.reply('1. Nick i regjistruar 2. Kenga te mos jet me e vjeter se viti 2020 3. Kenga duhet nga zhanri: Music ose Entertaiment (Komendi ose humor dhe gjuhe tjera vec Shqipes nuk lejohen) 4. Kenga nuk duhet te jete me e gjate se 399 seconda')
     }
 
 
@@ -310,7 +310,7 @@ let boti = function (nick, ident) {
     // current track
     if (event.message.startsWith("!kenga")) {
       internetradio.getStationInfo("http://degjo.zemra.org:8000", function(error, station) {
-        event.reply(event.nick + " Jeni duke degjuar: 4" + station.title)  
+        event.reply(event.nick + " Jeni duke degjuar:4 " + station.title)  
       });
     }
 
