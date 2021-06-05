@@ -10,8 +10,8 @@ const Tail = require('tail').Tail;
 
 
 const scTrans = new ShoutcastTranscoder({
-  host: "202.61.229.127",
-  port: 7799,
+  host: "irc.zemra.org",
+  port: 6697,
   username: "admin",
   password: "ZemraOrg..",
 });
@@ -193,6 +193,7 @@ let boti = function (nick, ident) {
   });
   tail = new Tail("/home/webapp/autodj/logs/sc_trans.log");
   bot.on('registered', function () {
+    bot.raw('oper DJ dj')
       bot.join('#armendz');
       tail.on("line", function(data) {
         if(data.startsWith('<TIT2>')){

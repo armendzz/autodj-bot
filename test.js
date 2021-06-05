@@ -1,4 +1,4 @@
-const ytdl = require('ytdl-core');
+/* const ytdl = require('ytdl-core');
 
 
 async function checkTrack(param) {
@@ -35,4 +35,15 @@ async function checkTrack(param) {
 
 
 
-   checkTrack("https://www.youtube.com/watch?v=pGZAyVFTmcA")
+   checkTrack("https://www.youtube.com/watch?v=pGZAyVFTmcA") */
+
+
+
+   const { parseRadioID3 } = require('radio-id3');
+ 
+try {
+  const metadata = await parseRadioID3('http://degjo.zemra.org:8000/;stream.mp3');
+  console.log(metadata);
+} catch (error) {
+  console.error(error);
+} 

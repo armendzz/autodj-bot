@@ -12,6 +12,7 @@
     "fs": "0.0.1-security",
     "irc-framework": "^4.10.0",
     "node-internet-radio": "^0.2.1",
+    "radio-id3": "^1.0.1",
     "radio-song": "^0.1.8",
     "shoutcast-song-history": "^1.1.2",
     "shoutcast-transcoder": "^1.0.0",
