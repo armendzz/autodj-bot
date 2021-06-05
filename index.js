@@ -219,6 +219,7 @@ let boti = function (nick, ident) {
           } else {
             checkTrack(ytUrl).then(function (oko) {
               if (oko == "true") {
+                bot.say('#armendz', event.nick + ' shtoi kengen: ' + responsee)
                 event.reply(event.nick + ' Kenga qe keni kerkuar do te shtohet ne playlisten tone dhe ju do ta ndegjoni pas pak.')
                 exec(`youtube-dl --extract-audio --audio-format mp3 --output "${trackspath}%(title)s.%(ext)s" ${ytUrl}`, (error, stdout, stderr) => {
                   if (error) {
